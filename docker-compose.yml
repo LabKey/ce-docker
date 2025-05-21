@@ -1,0 +1,88 @@
+---
+
+services:
+  community:
+    image: ${COMPOSE_IMAGE:-labkeyteamcity/labkey-community:25.3.9}
+    container_name: labkey-community
+    depends_on:
+      - pg-community
+    ports:
+      - ${HOST_PORT:-8443}:8443
+    volumes:
+      - ./mounts/files:/labkey/files
+      # - files:/labkey/files
+      - ./mounts/modules:/labkey/externalModules
+      - ./mounts/logs:/labkey/logs
+    environment:
+      - TOMCAT_SSL_CIPHERS=${TOMCAT_SSL_CIPHERS:-HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!kRSA:!EDH:!DHE:!DH:!CAMELLIA:!ARIA:!AESCCM:!SHA:!CHACHA20}
+      - LOG_LEVEL_SPRING_WEB=INFO
+      - LOG_LEVEL_TOMCAT=INFO
+      - LOG_LEVEL_DEFAULT=INFO
+      - LOG_LEVEL_LABKEY_DEFAULT=INFO
+      - LOG_LEVEL_API_SETTINGS=INFO
+      - LOG_LEVEL_API_MODULELOADER=INFO
+
+      - LOGGER_PATTERN=%-80.80logger{79}
+
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-a"placeholder#'password}
+      - POSTGRES_HOST=pg-community
+
+      - MAX_JVM_RAM_PERCENT=${MAX_JVM_RAM_PERCENT:-75.0}
+      - JAVA_PRE_JAR_EXTRA=-XX:+UseSerialGC -Xss512k
+
+      # edit to match your SMTP server if you wish to use email
+      - SMTP_HOST=localhost
+      - SMTP_AUTH=false
+      - SMTP_PORT=25
+      - SMTP_USER=foo
+      - SMTP_PASSWORD=${SMTP_PASSWORD:-}
+      - SMTP_STARTTLS=false
+      - LABKEY_SYSTEM_EMAIL_ADDRESS=${SMTP_FROM:-do_not_reply@localhost}
+
+      # If these parameters are set use provided; else default to Labkey new installation wizard
+      # ${VARIABLE:-} will use the supplied VARIABLE or default to null - see docker-compose docs for vairable expansion 
+      - LABKEY_CREATE_INITIAL_USER=${LABKEY_CREATE_INITIAL_USER:-}
+      - LABKEY_CREATE_INITIAL_USER_APIKEY=${LABKEY_CREATE_INITIAL_USER_APIKEY:-}
+      - LABKEY_COMPANY_NAME=${LABKEY_COMPANY_NAME:-Labkey Demo}
+      - LABKEY_SYSTEM_DESCRIPTION=${LABKEY_SYSTEM_DESCRIPTION:-Labkey Demo}
+      - LABKEY_SYSTEM_SHORT_NAME=${LABKEY_SYSTEM_SHORT_NAME:-Labkey Demo}
+
+      # recommended postgres connection settings
+      - POSTGRES_MAX_TOTAL_CONNECTIONS=${POSTGRES_MAX_TOTAL_CONNECTIONS:-50}
+      - POSTGRES_MAX_IDLE_CONNECTIONS=${POSTGRES_MAX_IDLE_CONNECTIONS:-10}
+      - POSTGRES_MAX_WAIT_MILLIS=${POSTGRES_MAX_WAIT_MILLIS:-120000}
+      - POSTGRES_ACCESS_UNDERLYING_CONNECTIONS=${POSTGRES_ACCESS_UNDERLYING_CONNECTIONS:-true}
+      - POSTGRES_VALIDATION_QUERY=${POSTGRES_VALIDATION_QUERY:-SELECT 1}
+
+      # optional values - used primarily for labkey cloud deployments 
+      - LABKEY_CUSTOM_PROPERTIES_S3_URI=${LABKEY_CUSTOM_PROPERTIES_S3_URI:-}
+      - LABKEY_OPTIONAL_APP_PROPERTIES_S3_URI=${LABKEY_OPTIONAL_APP_PROPERTIES_S3_URI:-}
+      - LABKEY_DEFAULT_PROPERTIES_S3_URI=${LABKEY_DEFAULT_PROPERTIES_S3_URI:-}
+      - LOG4J_CONFIG_FILE=${LOG4J_CONFIG_FILE-log4j2.xml}
+      - LOG4J_CONFIG_OVERRIDE=${LOG4J_CONFIG_OVERRIDE:-default.log4j.xml}
+      - JSON_OUTPUT=${JSON_OUTPUT-false}
+      - DD_COLLECT_APM=${DD_COLLECT_APM-false}      
+      - SLEEP=${SLEEP:-0}
+      - PURGE_HEAP_AND_ERROR_LOGS_OLDER_THAN_DAYS=${PURGE_HEAP_AND_ERROR_LOGS_OLDER_THAN_DAYS:-90}
+
+  pg-community:
+    image: postgres:17
+    container_name: pg-community
+    entrypoint:
+      - "/bin/bash"
+      - "-c"
+      - "docker-entrypoint.sh postgres >/dev/null 2>&1"
+    environment:
+      # we recommend changing this to a strong random password of at least 16 characters
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-a"placeholder#'password}
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    volumes:
+      - ./mounts/pgdata/${IDENT:-postgres}-data:/var/lib/postgresql/data
+    ports:
+      - ${PG_PORT:-54321}:5432
+
