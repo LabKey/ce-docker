@@ -21,7 +21,7 @@ If you need help installing Docker, see these links for instructions:
 
 
 ## Quick start
-Once you have Docker installed, getting started with LabKey Community Edition is as easy as following these steps:
+Once you have Docker installed, follow these steps to get started with LabKey Community Edition:
 
 1. Open a command line window and clone this repo locally
 `git clone https://github.com/LabKey/ce-docker.git`
@@ -33,8 +33,9 @@ Once you have Docker installed, getting started with LabKey Community Edition is
 `docker compose up community --detach`
 
 1. After a few minutes, LabKey Community Edition will have started, and you can log in to the application by opening a web browser and navigating to `https://localhost:8443`
-1. Using your web browser, complete the initial setup wizard. 
-1. Visit our docs page to learn more about how to [get started using LabKey](https://www.labkey.org/Documentation/wiki-page.view?name=gettingStarted).
+2. You may see a warning about the connection being insecure, and need to click through 'advanced' or 'continue' to get to the setup wizard.
+3. Using your web browser, complete the initial setup wizard.
+4. Visit our docs page to learn more about how to [get started using LabKey](https://www.labkey.org/Documentation/wiki-page.view?name=gettingStarted).
  
 ## Stopping and clean up
 
@@ -55,7 +56,7 @@ There are a substantial number of configuration options available.  The `docker-
 [Additional configuration options are described here](https://github.com/LabKey/Dockerfile?tab=readme-ov-file#labkey). 
 
 ### Upgrading versions
-We only publish tagged versions to Docker Hub (we don't publish a 'latest' tag).  To upgrade to a new version of LabKey Community edition, you have two options:
+We only publish tagged versions to Docker Hub (we don't publish a 'latest' tag). To upgrade to a new version of LabKey Community edition, you have two options:
 1. Edit the `docker-compose.yml` file and update the `image` version to the LabKey version you wish to use. 
-2. Or you can launch a new version via docker compose up command line.
+2. Launch a new version with the `docker compose up` command line.
 `export IDENT="labkeyteamcity/labkey-community:25.3.9" docker compose up community --detach`
