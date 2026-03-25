@@ -59,4 +59,4 @@ There are a substantial number of configuration options available.  The `docker-
 We only publish tagged versions to Docker Hub (we don't publish a 'latest' tag). To upgrade to a new version of LabKey Community edition, you have two options:
 1. Edit the `docker-compose.yml` file and update the `image` version to the LabKey version you wish to use. 
 2. Launch a new version with the `docker compose up` command line.
-`export IDENT="labkeyteamcity/labkey-community:25.11.0" docker compose up community --detach`
+`export IDENT="labkeyteamcity/labkey-community:26.3.0" docker compose up community --detach`

@@ -2,7 +2,7 @@
 
 services:
   community:
-    image: ${COMPOSE_IMAGE:-labkeyteamcity/labkey-community:25.11.0}
+    image: ${COMPOSE_IMAGE:-labkeyteamcity/labkey-community:26.3.0}
     container_name: labkey-community
     depends_on:
       - pg-community
