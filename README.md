@@ -19,6 +19,8 @@ If you need help installing Docker, see these links for instructions:
 - Install Docker on [Windows](https://docs.docker.com/desktop/setup/install/windows-install/)
 - Install Docker on [Linux](https://docs.docker.com/desktop/setup/install/linux/)
 
+> **Apple Silicon (M1/M2/M3/M4) note:** The LabKey image is built for AMD64. Docker Desktop on Apple Silicon runs it automatically via Rosetta emulation — no extra configuration needed.
+
 
 ## Quick start
 Once you have Docker installed, follow these steps to get started with LabKey Community Edition:

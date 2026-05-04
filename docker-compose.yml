@@ -3,6 +3,7 @@
 services:
   community:
     image: ${COMPOSE_IMAGE:-labkeyteamcity/labkey-community:26.3.0}
+    platform: linux/amd64
     container_name: labkey-community
     depends_on:
       - pg-community
