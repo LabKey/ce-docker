@@ -60,5 +60,31 @@ There are a substantial number of configuration options available.  The `docker-
 ### Upgrading versions
 We only publish tagged versions to Docker Hub (we don't publish a 'latest' tag). To upgrade to a new version of LabKey Community edition, you have two options:
 1. Edit the `docker-compose.yml` file and update the `image` version to the LabKey version you wish to use. 
-2. Launch a new version with the `docker compose up` command line.
-`export IDENT="labkeyteamcity/labkey-community:26.3.0" docker compose up community --detach`
+2. Launch a new version from the command line by setting `COMPOSE_IMAGE`.
+`COMPOSE_IMAGE="labkeyteamcity/labkey-community:26.3.0" docker compose up community --detach`
+
+### PostgreSQL version
+
+The database defaults to **PostgreSQL 18** (`image: postgres:${PG_VERSION:-18}`). The major
+version is included in the data-directory name (`./mounts/pgdata/<IDENT>-<PG_VERSION>-data`), so
+each version keeps its own directory on disk.
+
+PostgreSQL will not read a data directory created by an older major version, so an existing
+Postgres 17 database cannot be started by the Postgres 18 image in place:
+
+- **Start fresh on Postgres 18 (simplest):** just `docker compose up community --detach`. A new,
+  empty data directory is created; your old data under `./mounts/pgdata/postgres-data` is left
+  untouched (delete it once you no longer need it).
+- **Keep your existing Postgres 17 data:** pin the old version — `PG_VERSION=17 docker compose up
+  community --detach`. If your data predates this change it lives in the legacy
+  `./mounts/pgdata/postgres-data` directory; rename it to `postgres-17-data` first.
+
+To carry real data forward, dump from a running Postgres 17 container and restore into Postgres 18:
+
+```bash
+PG_VERSION=17 docker compose up -d pg-community
+docker compose exec pg-community pg_dumpall -U postgres > dump.sql
+PG_VERSION=17 docker compose down
+docker compose up -d pg-community          # Postgres 18, fresh data dir
+cat dump.sql | docker compose exec -T pg-community psql -U postgres
+```
