@@ -67,7 +67,10 @@ We only publish tagged versions to Docker Hub (we don't publish a 'latest' tag).
 
 The database defaults to **PostgreSQL 18** (`image: postgres:${PG_VERSION:-18}`). The major
 version is included in the data-directory name (`./mounts/pgdata/<IDENT>-<PG_VERSION>-data`), so
-each version keeps its own directory on disk.
+each version keeps its own directory on disk. `IDENT` is a separate, optional variable (mirroring
+[`LabKey/Dockerfile`](https://github.com/LabKey/Dockerfile)) that lets you run multiple instances
+side by side without their pgdata directories colliding — it doesn't affect which image is used;
+that's `COMPOSE_IMAGE`.
 
 PostgreSQL will not read a data directory created by an older major version, so an existing
 Postgres 17 database cannot be started by the Postgres 18 image in place:

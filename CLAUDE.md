@@ -43,7 +43,7 @@ Key overridable variables:
 `mounts/` is gitignored. Do not delete these without understanding the consequences:
 - `mounts/files/` — LabKey file storage
 - `mounts/logs/` — server logs
-- `mounts/pgdata/` — PostgreSQL data files (subdirectory keyed by `$IDENT` and `$PG_VERSION`)
+- `mounts/pgdata/` — PostgreSQL data files (subdirectory keyed by `$IDENT` and `$PG_VERSION`; `IDENT` isolates pgdata across multiple concurrently-running instances, mirroring `LabKey/Dockerfile` — it does not affect which image is used, that's `COMPOSE_IMAGE`)
 - `mounts/modules/` — custom/external LabKey modules
 
 ## Upgrading LabKey Version
