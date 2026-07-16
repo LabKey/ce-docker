@@ -90,6 +90,7 @@ services:
       retries: 3
       start_period: 40s
     volumes:
+      # Version-namespaced data directory so Postgres 17, 18, etc. don't collide
       - ./mounts/pgdata/${IDENT:-postgres}-${PG_VERSION:-18}-data:/var/lib/postgresql/data
     ports:
       - ${PG_PORT:-54321}:5432
