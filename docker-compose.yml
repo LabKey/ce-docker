@@ -67,15 +67,22 @@ services:
       - PURGE_HEAP_AND_ERROR_LOGS_OLDER_THAN_DAYS=${PURGE_HEAP_AND_ERROR_LOGS_OLDER_THAN_DAYS:-90}
 
   pg-community:
-    image: postgres:17
+    image: postgres:${PG_VERSION:-18}
     container_name: pg-community
+    # run postgres through the image entrypoint; logs stay visible so
+    # version/startup errors (e.g. pg data-dir incompatibility) surface in
+    # `docker compose logs` instead of the container silently crash-looping.
     entrypoint:
       - "/bin/bash"
       - "-c"
-      - "docker-entrypoint.sh postgres >/dev/null 2>&1"
+      - "docker-entrypoint.sh postgres"
     environment:
       # we recommend changing this to a strong random password of at least 16 characters
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-a"placeholder#'password}
+      # pin PGDATA to the pre-18 default so the bind mount below keeps
+      # persisting data: the postgres:18 image moved its default PGDATA to
+      # /var/lib/postgresql/18/docker, which would bypass this mount entirely.
+      - PGDATA=/var/lib/postgresql/data
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres"]
       interval: 30s
@@ -83,7 +90,8 @@ services:
       retries: 3
       start_period: 40s
     volumes:
-      - ./mounts/pgdata/${IDENT:-postgres}-data:/var/lib/postgresql/data
+      # Version-namespaced data directory so Postgres 17, 18, etc. don't collide
+      - ./mounts/pgdata/${IDENT:-postgres}-${PG_VERSION:-18}-data:/var/lib/postgresql/data
     ports:
       - ${PG_PORT:-54321}:5432
 
