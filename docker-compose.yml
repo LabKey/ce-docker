@@ -48,6 +48,9 @@ services:
       - LABKEY_SYSTEM_DESCRIPTION=${LABKEY_SYSTEM_DESCRIPTION:-Labkey Demo}
       - LABKEY_SYSTEM_SHORT_NAME=${LABKEY_SYSTEM_SHORT_NAME:-Labkey Demo}
 
+      # reported in usage metrics so LabKey can tell quick start installs apart
+      - LABKEY_DEPLOYMENT_CHANNEL=ce-docker
+
       # recommended postgres connection settings
       - POSTGRES_MAX_TOTAL_CONNECTIONS=${POSTGRES_MAX_TOTAL_CONNECTIONS:-50}
       - POSTGRES_MAX_IDLE_CONNECTIONS=${POSTGRES_MAX_IDLE_CONNECTIONS:-10}
