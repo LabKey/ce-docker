@@ -19,7 +19,7 @@ docker compose down
 docker compose down -v --remove-orphans
 
 # Override image version at launch
-COMPOSE_IMAGE="labkeyteamcity/labkey-community:26.3.0" docker compose up community --detach
+COMPOSE_IMAGE="labkeyteamcity/labkey-community:26.11.0" docker compose up community --detach
 ```
 
 Access at `https://localhost:8443` after startup (self-signed cert — expect browser warning).
@@ -29,7 +29,7 @@ Access at `https://localhost:8443` after startup (self-signed cert — expect br
 All configuration is done via environment variables. `docker-compose.yml` uses `${VAR:-default}` expansion throughout — set variables in the shell or a `.env` file to override defaults.
 
 Key overridable variables:
-- `COMPOSE_IMAGE` — LabKey image tag (default: `labkeyteamcity/labkey-community:26.3.0`)
+- `COMPOSE_IMAGE` — LabKey image tag (default: `labkeyteamcity/labkey-community:26.11.0`)
 - `HOST_PORT` — host HTTPS port (default: `8443`)
 - `PG_PORT` — host PostgreSQL port (default: `54321`)
 - `PG_VERSION` — PostgreSQL major version / `pg-community` image tag (default: `18`); also the data-dir suffix
